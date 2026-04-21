@@ -1,0 +1,13 @@
+logs/
+*.pyc
+__pycache__/
+.env
+*.egg-info/
+dist/
+build/
+
+# IDE / agent local configs
+.idea/
+.claude/
+.agents/
+.junie/
