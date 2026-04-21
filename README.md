@@ -42,7 +42,20 @@
 
 ## 시작하기
 
-### 1. 최초 실행
+### 1. `.env` 준비
+
+`.env.example`을 복사해서 `.env`를 만들고 Supabase 접속정보 및 Fernet key를 채운다:
+
+```bash
+cp .env.example .env
+# Fernet key 생성
+docker run --rm python:3.12 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+# 출력값을 .env의 AIRFLOW__CORE__FERNET_KEY에 입력
+```
+
+> Linux 사용자는 `AIRFLOW_UID`에 `id -u` 결과를 넣는다. Mac/Windows는 `50000` 그대로 둔다.
+
+### 2. 최초 실행
 
 ```bash
 docker compose up airflow-init       # DB 마이그레이션 + 관리자 계정 생성
@@ -51,14 +64,14 @@ docker compose up -d                 # 전체 서비스 시작
 
 웹 UI: http://localhost:9090 (기본 계정 `airflow` / `airflow`, `.env`에서 변경)
 
-### 2. 종료
+### 3. 종료
 
 ```bash
 docker compose down                  # 서비스만 종료
 docker compose down -v               # 볼륨(DB 데이터)까지 삭제
 ```
 
-### 3. 커스텀 이미지 빌드
+### 4. 커스텀 이미지 빌드
 
 `requirements.txt` 등 의존성을 추가해야 할 경우, `docker-compose.yml`에서 `image:` 줄을 주석처리하고 `build: .`을 활성화:
 
@@ -67,7 +80,7 @@ docker compose build
 docker compose up -d
 ```
 
-### 4. 모니터링/디버깅
+### 5. 모니터링/디버깅
 
 ```bash
 docker compose --profile flower up -d                # Flower 활성화
