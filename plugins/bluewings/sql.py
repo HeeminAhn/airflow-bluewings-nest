@@ -17,6 +17,16 @@ UPSERT_MATCHES_SQL = """
         updated_at = NOW()
 """
 
+DELETE_STANDINGS_SQL = "DELETE FROM bluewings_nest.league_standings WHERE season = %s"
+
+INSERT_STANDINGS_SQL = """
+    INSERT INTO bluewings_nest.league_standings (
+        season, team_name, position, played, won, drawn, lost,
+        goals_for, goals_against, goal_difference, points, updated_at
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+"""
+
 
 def get_supabase_connection():
     conn = BaseHook.get_connection("supabase_postgres")
@@ -49,3 +59,36 @@ def upsert_matches(matches):
     pg_conn.close()
     print(f"Upserted {count} matches to Supabase")
     return count
+
+
+def upsert_standings(season, standings):
+    if not standings:
+        print("No standings to upsert")
+        return 0
+
+    pg_conn = get_supabase_connection()
+    cursor = pg_conn.cursor()
+
+    try:
+        cursor.execute(DELETE_STANDINGS_SQL, (season,))
+        deleted = cursor.rowcount
+
+        count = 0
+        for s in standings:
+            cursor.execute(INSERT_STANDINGS_SQL, (
+                s["season"], s["team_name"], s["position"], s["played"],
+                s["won"], s["drawn"], s["lost"],
+                s["goals_for"], s["goals_against"], s["goal_difference"],
+                s["points"],
+            ))
+            count += 1
+
+        pg_conn.commit()
+        print(f"Standings season={season}: deleted {deleted}, inserted {count}")
+        return count
+    except Exception:
+        pg_conn.rollback()
+        raise
+    finally:
+        cursor.close()
+        pg_conn.close()
