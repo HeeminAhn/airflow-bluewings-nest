@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Apache Airflow 3.1.8 / Python 3.12 개발 환경. Docker Compose 기반 CeleryExecutor 구성으로 PostgreSQL(메타데이터) + Redis(브로커)를 사용한다. 다른 Python 버전이 필요하면 `.env`의 이미지 태그를 변경한다 (예: `apache/airflow:3.1.8-python3.11`).
+Apache Airflow 3.3.2 / Python 3.14.6 개발 환경. Docker Compose 기반 CeleryExecutor 구성으로 PostgreSQL(메타데이터) + Redis(브로커)를 사용한다. 다른 Python 버전이 필요하면 `.env`의 이미지 태그를 변경한다 (예: `apache/airflow:3.3.2-python3.14`).
 
 ## Commands
 

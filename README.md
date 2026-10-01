@@ -4,7 +4,7 @@
 
 ## 구성
 
-- **Airflow 3.1.8** / **Python 3.12**
+- **Airflow 3.3.2** / 로컬 **Python 3.14.6**, Docker **Python 3.14**
 - **Docker Compose** 기반 CeleryExecutor
 - **PostgreSQL 16** (Airflow 메타데이터) / **Redis 7.2** (Celery 브로커)
 - **Supabase PostgreSQL** (수집 데이터 저장소)
@@ -42,6 +42,20 @@
 
 ## 시작하기
 
+### 로컬 Python 가상환경 (Windows PowerShell)
+
+설치된 Python 3.14.6과 `uv`를 사용한다. `.python-version`에서 로컬 버전을 고정하고, `uv.lock`으로 의존성을 관리한다.
+
+```powershell
+uv sync --locked
+.\.venv\Scripts\Activate.ps1
+python --version
+```
+
+가상환경은 `.venv/`에 생성되며 Git에서 제외된다. Windows 가상환경은 편집 및 의존성 관리용이고, Airflow 서비스와 DAG 실행은 Linux 기반 Docker 컨테이너에서 수행한다.
+
+Docker 이미지는 `apache/airflow:3.3.2-python3.14`를 사용한다. 이 태그는 Python 3.14 계열을 지정하며 패치 버전은 이미지에 따라 달라질 수 있다.
+
 ### 1. `.env` 준비
 
 `.env.example`을 복사해서 `.env`를 만들고 Supabase 접속정보 및 Fernet key를 채운다:
@@ -49,7 +63,7 @@
 ```bash
 cp .env.example .env
 # Fernet key 생성
-docker run --rm python:3.12 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 # 출력값을 .env의 AIRFLOW__CORE__FERNET_KEY에 입력
 ```
 
@@ -129,8 +143,10 @@ docker compose logs -f airflow-dag-processor
 
 ## Python 버전 변경
 
-다른 Python 버전이 필요하면 `.env`의 이미지 태그를 변경:
+로컬 Python 버전은 `.python-version`과 `pyproject.toml`을 함께 변경한 뒤 `uv sync`로 반영한다. Docker는 `.env`의 이미지 태그와 `Dockerfile`을 함께 변경한다:
 
 ```
-AIRFLOW_IMAGE_NAME=apache/airflow:3.1.8-python3.11
+AIRFLOW_IMAGE_NAME=apache/airflow:3.3.2-python3.14
 ```
+
+Airflow 버전을 변경할 때는 `pyproject.toml`, `requirements.txt`, Docker 이미지 태그를 함께 맞춘다. 기존 Airflow DB를 업그레이드할 때는 백업 후 기존 서비스를 중지하고 `docker compose up airflow-init`으로 마이그레이션한 다음 서비스를 시작한다.

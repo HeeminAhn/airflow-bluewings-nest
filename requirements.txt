@@ -1,0 +1,4 @@
+apache-airflow[celery,fab]==3.3.2
+apache-airflow-providers-standard
+requests
+psycopg2-binary

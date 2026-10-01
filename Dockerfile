@@ -1,4 +1,4 @@
-FROM apache/airflow:3.1.8
+FROM apache/airflow:3.3.2-python3.14
 
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \

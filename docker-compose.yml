@@ -1,6 +1,6 @@
 x-airflow-common: &airflow-common
   # 커스텀 이미지를 사용하려면 image를 주석처리하고 build를 활성화하세요
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.8}
+  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.3.2-python3.14}
   # build: .
   env_file:
     - ${ENV_FILE_PATH:-.env}
@@ -10,7 +10,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
-    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY:-}
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'

@@ -3,7 +3,10 @@ name = "airflow-bluewings-nest"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14.6,<3.15"
 dependencies = [
-    "apache-airflow==3.1.8",
+    "apache-airflow[celery,fab]==3.3.2",
+    "apache-airflow-providers-standard",
+    "requests",
+    "psycopg2-binary",
 ]
